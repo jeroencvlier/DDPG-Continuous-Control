@@ -21,7 +21,7 @@ The Actor-Critic neural networks were compiled from the library [Pytorch](https:
 <b>Experience Replay</b>
 An Experience replay method was used to avoid correlations. The memory size used was 500000 with a replay size of 500.
 
-Other hyperparameters used:
+Gradient clipping is also used to stabalise learning. Other hyperparameters used:
 * gamma = 0.95
 * tau = 0.01
 * Update Frequency = 20
