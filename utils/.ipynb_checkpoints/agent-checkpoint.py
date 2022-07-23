@@ -20,7 +20,7 @@ import torch.nn.functional as F
 
 class Agent:
     '''Defines the agent that interacts and learns with the environment'''
-    def __init__(self,num_agents,state_size,action_size, memory_size = 500000, replay_size = 500, gamma = 0.95, tau=0.01, update_frequency = 20, learn_steps = 25, lr_actor = 0.0001, lr_critic = 0.001, seed = 333, print_every = 5):
+    def __init__(self,num_agents,state_size,action_size, memory_size = 500000, replay_size = 500, gamma = 0.95, tau=0.01, update_frequency = 20, learn_steps = 50, lr_actor = 0.0001, lr_critic = 0.001, seed = 333, print_every = 5):
         # Preset variables for learning
         self.tau = tau
         self.gamma = gamma
@@ -115,7 +115,7 @@ class Agent:
 
             # critic loss optimizer
             na = self.actor_target(ns)
-            q_target_next = self.critic_target(ns, na).detach() ## <<< Detach???
+            q_target_next = self.critic_target(ns, na).detach()
 
             q_target = r + (self.gamma * (1-d) * q_target_next) 
             q = self.critic(s, a)
@@ -150,25 +150,30 @@ class Agent:
         '''    
         if isinstance(deque_length,int) == False:
             deque_length = len(deque_length)
-            
-        msg = 'Episode {}\tAverage Scores: {:.2f}'.format(len(scores), np.mean(scores[-deque_length:]))
-        self.msgs.append(msg)
         
+        if solved == False:
+            msg = 'Episode {}\tAverage Scores: {:.2f}'.format(len(scores), np.mean(scores[-deque_length:]))
+            self.msgs.append(msg)
+
         # clear output and print scores
         clear_output()
         for m in self.msgs: 
             print(m)
             
         if solved == True:
-            print('\nEnvironment solved!\tAverage Score: {:.2f}'.format(len(scores)-100, np.mean(scores[-100:])))
+            print('\nEnvironment solved!\tAverage Score: {:.2f}'.format(np.mean(scores[-100:])))
 
         # Score Plot
         plt.figure(figsize=(8,5))
         plt.plot([*range(1,len(scores)+1)],scores,label='Score')
 
         average_window = []
-        for w in range(1,deque_length+1):
-            average_window.append(np.mean(scores[:w]))
+        for w1 in range(1,min(len(scores),deque_length)+1):
+            average_window.append(np.mean(scores[:w1]))
+        if len(scores)>100:
+            for w2 in range(deque_length+1,len(scores)+1):
+                average_window.append(np.mean(scores[w2-deque_length:w2]))        
+
 
         plt.plot([*range(1,len(scores)+1)],average_window,color='red',label=f'Average Score')
         plt.plot([*range(1,len(scores)+1)],[target_score for i in range(len(scores))],color='black',label='Target Score')

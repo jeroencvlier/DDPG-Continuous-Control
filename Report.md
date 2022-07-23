@@ -39,7 +39,7 @@ All code imports used can be found in the utils folder and consists of:
 
 #### <b>Result</u>
 
-The environment successfully managed to achieve an average score of 30.99 within 100 episodes.
+The environment successfully managed to achieve an average score of 33.72 within 100 episodes.
 
 ![GIF of Trained Network](Images/TainedNetworkScores.png)
 
